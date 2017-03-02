@@ -27,7 +27,7 @@ type IrcConn struct {
 	Buffer    *bufio.ReadWriter
 	Reader    *bufio.Reader
 	Writer    *bufio.Writer
-	WaitGroup *sync.WaitGroup
+	WaitGroup sync.WaitGroup
 }
 
 func init() {
