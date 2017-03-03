@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"os"
 	"sync"
 	"time"
 )
@@ -17,12 +18,12 @@ type IrcEvent struct {
 
 //IrcConn ...
 type IrcConn struct {
-	Host      string
-	Port      string
-	UseSsl    bool
-	Ident     string
-	Name      string
-	Nick      string
+	Host      string `yaml:"host"`
+	Port      string `yaml:"port"`
+	UseSsl    bool   `yaml:"usessl"`
+	Ident     string `yaml:"ident"`
+	Name      string `yaml:"name"`
+	Nick      string `yaml:"nick"`
 	Socket    net.Conn
 	Buffer    *bufio.ReadWriter
 	Reader    *bufio.Reader
@@ -42,6 +43,7 @@ func Connect(irc *IrcConn) {
 		fmt.Printf("Connected to %s:%s\n", irc.Host, irc.Port)
 	} else {
 		fmt.Printf("Error connecting: %v\n", err)
+		os.Exit(1)
 	}
 
 	irc.Reader = bufio.NewReader(irc.Socket)
@@ -58,11 +60,6 @@ func Write(irc *IrcConn, message string) {
 	fmt.Fprintf(irc.Socket, "%s\n", message)
 }
 
-//JoinChannel .. joins a channel
-func JoinChannel(irc *IrcConn, channel string) {
-	Write(irc, "JOIN "+channel)
-}
-
 //Poll ..
 func Poll(irc *IrcConn, ch chan<- string) {
 
@@ -77,7 +74,7 @@ func Poll(irc *IrcConn, ch chan<- string) {
 		ch <- fmt.Sprintf("%s\n", msg)
 
 	}
-	defer close(ch)
+	close(ch)
 	fmt.Println("Out of loop")
 	defer irc.WaitGroup.Done()
 
