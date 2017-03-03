@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"regexp"
 	"sync"
 	"time"
 )
@@ -29,6 +30,7 @@ type IrcConn struct {
 	Reader    *bufio.Reader
 	Writer    *bufio.Writer
 	WaitGroup sync.WaitGroup
+	Events    map[string]*regexp.Regexp
 }
 
 func init() {
